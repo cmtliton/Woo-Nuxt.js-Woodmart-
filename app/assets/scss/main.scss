@@ -1,0 +1,54 @@
+/* 1. Premium Typography */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap");
+
+$heading-font: "Playfair Display", serif;
+$body-font: "Inter", sans-serif;
+
+h1,
+h2,
+h3,
+.text-h1,
+.text-h2,
+.text-h3 {
+  font-family: $heading-font !important;
+  font-weight: 700;
+  letter-spacing: -0.02em !important;
+  color: #1a1a1a;
+}
+
+body {
+  font-family: $body-font !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 2. Soft "Looming" Shadows */
+.soft-shadow {
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.soft-shadow:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.07) !important;
+}
+
+/* 3. Minimalist Woodmart Buttons */
+.letter-spacing-1 {
+  letter-spacing: 1.5px !important;
+}
+
+.v-btn--variant-outlined {
+  border-width: 1.5px !important;
+}
+
+/* 4. Product Image Hover Effect */
+.product-image-container {
+  overflow: hidden;
+  .v-img {
+    transition: transform 1.2s cubic-bezier(0.15, 0, 0.15, 1);
+  }
+  &:hover .v-img {
+    transform: scale(1.08);
+  }
+}
