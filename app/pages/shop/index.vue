@@ -4,17 +4,104 @@ import { useDisplay } from "vuetify";
 const { mdAndUp } = useDisplay();
 const route = useRoute();
 const mobileFilterDrawer = ref(false);
+const categoryStore = useCategoryStore();
+
+// Fetch categories on page load
+await categoryStore.fetchCategories();
+
+// Filter state
+const filters = reactive({
+  category: (route.query.category as string) || "",
+  min: Number(route.query.min) || 0,
+  max: Number(route.query.max) || 200000,
+  materials: (route.query.materials as string)?.split(",") || [],
+});
 
 // Data Fetching Logic (Nuxt 4 Server Route)
 const currentPage = ref(Number(route.query.page) || 1);
+const sortQuery = computed(() => route.query.sort || "menu_order");
+
 const { data, pending, refresh } = await useFetch("/api/products", {
-  query: {
-    page: currentPage,
+  query: computed(() => ({
+    page: currentPage.value,
     per_page: 16,
-    sort: () => route.query.sort,
-  },
-  watch: [currentPage, () => route.query.sort],
+    sort: sortQuery.value,
+    category: filters.category || undefined,
+    min_price: filters.min || undefined,
+    max_price: filters.max || undefined,
+    // For materials, assuming it's an attribute, but for now, skip or handle later
+  })),
+  watch: [currentPage, sortQuery, filters],
+  key: computed(
+    () =>
+      `products-${currentPage.value}-${sortQuery.value}-${filters.category}-${filters.min}-${filters.max}`,
+  ),
 });
+
+// Handle sort change
+const handleSortChange = (newSort: string) => {
+  navigateTo({
+    query: {
+      ...route.query,
+      sort: newSort,
+      page: 1, // Reset to first page when sorting changes
+    },
+  });
+};
+
+// Handle view change
+const handleViewChange = (newView: "grid" | "list") => {
+  navigateTo({
+    query: {
+      ...route.query,
+      view: newView,
+    } as any,
+  });
+};
+
+// Handle filter change
+const handleFilterChange = (newFilters: {
+  category?: string;
+  min?: number;
+  max?: number;
+  materials?: string[];
+}) => {
+  const query = { ...route.query };
+  if (newFilters.category !== undefined) {
+    filters.category = newFilters.category || "";
+    if (newFilters.category) {
+      query.category = newFilters.category;
+    } else {
+      delete query.category;
+    }
+  }
+  if (newFilters.min !== undefined) {
+    filters.min = newFilters.min;
+    if (newFilters.min > 0) {
+      query.min_price = newFilters.min.toString();
+    } else {
+      delete query.min_price;
+    }
+  }
+  if (newFilters.max !== undefined) {
+    filters.max = newFilters.max;
+    if (newFilters.max < 200000) {
+      query.max_price = newFilters.max.toString();
+    } else {
+      delete query.max_price;
+    }
+  }
+  if (newFilters.materials !== undefined) {
+    filters.materials = newFilters.materials || [];
+    if (newFilters.materials && newFilters.materials.length > 0) {
+      query.materials = newFilters.materials.join(",");
+    } else {
+      delete query.materials;
+    }
+  }
+  query.page = "1"; // Reset to first page when filters change
+  navigateTo({ query });
+};
 
 // SEO
 useSeoMeta({
@@ -38,7 +125,7 @@ useSeoMeta({
       <v-row>
         <!-- Desktop Sidebar -->
         <v-col v-if="mdAndUp" cols="12" md="3">
-          <ShopSidebar />
+          <ShopSidebar @filter-change="handleFilterChange" />
         </v-col>
 
         <!-- Product Content Area -->
@@ -55,12 +142,17 @@ useSeoMeta({
             Filters
           </v-btn>
 
-          <ShopToolbar :total-results="data?.pagination?.total || 0" />
+          <ShopToolbar
+            :total-results="data?.pagination?.total || 0"
+            @sort-change="handleSortChange"
+            @view-change="handleViewChange"
+          />
 
           <!-- Reusing the Product Grid component designed earlier -->
           <ShopProductGrid
             :products="data?.products || []"
             :loading="pending"
+            :view="(route.query.view as 'grid' | 'list') || 'grid'"
           />
 
           <!-- Pagination -->
@@ -91,7 +183,7 @@ useSeoMeta({
             @click="mobileFilterDrawer = false"
           />
         </div>
-        <ShopSidebar />
+        <ShopSidebar @filter-change="handleFilterChange" />
       </div>
     </v-navigation-drawer>
   </div>
