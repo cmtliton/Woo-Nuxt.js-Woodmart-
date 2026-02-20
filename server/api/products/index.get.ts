@@ -122,7 +122,7 @@ export default defineCachedEventHandler(
     getKey: (event) => {
       // Create a unique cache key based on query parameters
       const query = getQuery(event);
-      return `products-${query.category || "all"}-p${query.page || 1}-s${query.search || ""}-sort${query.sort || "menu_order"}-min${query.min_price || 0}-max${query.max_price || 5000}`;
+      return `products-${query.category || "all"}-p${query.page || 1}-s${query.search || ""}-sort${query.sort || "menu_order"}-min${query.min_price || 0}-max${query.max_price || 200000}`;
     },
   },
 );

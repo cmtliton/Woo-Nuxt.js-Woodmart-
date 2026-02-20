@@ -75,6 +75,7 @@ await useAsyncData("global-categories", () => categoryStore.fetchCategories());
       width="400"
       elevation="10"
       class="cart-drawer"
+      v-if="cartStore.isDrawerOpen === true"
     >
       <div class="pa-5 d-flex justify-space-between align-center border-b">
         <span class="text-h6 font-weight-bold">SHOPPING CART</span>
