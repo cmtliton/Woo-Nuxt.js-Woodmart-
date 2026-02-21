@@ -1,39 +1,70 @@
-/* 1. Premium Typography */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap");
+/* 1. Premium Typography & Font Imports */
+/* Hind Siliguri (Bengali) এবং বাকি ফন্টগুলো একসাথে ইম্পোর্ট করা হয়েছে */
+@import url("https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap");
 
-$heading-font: "Playfair Display", serif;
-$body-font: "Inter", sans-serif;
+// Variables: ফন্ট প্রায়োরিটি সেট করা (আগে English ফন্ট, তারপর Bengali)
+// এর ফলে ইংরেজি লেখা Playfair/Inter এ দেখাবে এবং বাংলা লেখা অটোমেটিক Hind Siliguri তে দেখাবে।
+$heading-font: "Playfair Display", "Hind Siliguri", serif;
+$body-font: "Inter", "Hind Siliguri", sans-serif;
+
+:root {
+  /* Vuetify এর গ্লোবাল ভ্যারিয়েবল আপডেট */
+  --v-font-family: #{$body-font} !important;
+  line-height: 1.6; // বাংলার জন্য একটু বেশি লাইন হাইট ভালো দেখায়
+}
 
 h1,
 h2,
 h3,
+h4,
+h5,
+h6,
 .text-h1,
 .text-h2,
-.text-h3 {
+.text-h3,
+.text-h4,
+.text-h5,
+.text-h6 {
   font-family: $heading-font !important;
-  font-weight: 700;
-  letter-spacing: -0.02em !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important; // বাংলার জন্য লেটার স্পেসিং খুব বেশি কমানো ঠিক নয়
   color: #1a1a1a;
-}
 
+  /* যদি শুধুমাত্র বাংলা টাইটেল হয়, তবে Playfair এ glyph না থাকায় Hind Siliguri অটোমেটিক পাবে */
+}
+div {
+  font-family: $heading-font !important;
+  font-weight: 500 !important;
+  color: #555;
+}
 body {
   font-family: $body-font !important;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #333;
 }
 
-/* 2. Soft "Looming" Shadows */
+/* 2. Soft "Looming" Shadows - Woodmart Style */
 .soft-shadow {
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03) !important;
   border: 1px solid rgba(0, 0, 0, 0.05) !important;
-}
 
-.soft-shadow:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.07) !important;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.07) !important;
+  }
 }
 
 /* 3. Minimalist Woodmart Buttons */
+.v-btn {
+  /* বাটন টেক্সট যদি বাংলা হয় তবে Hind Siliguri পাবে */
+  font-family: $body-font !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase;
+  font-weight: 600 !important;
+}
+
 .letter-spacing-1 {
   letter-spacing: 1.5px !important;
 }
@@ -45,10 +76,21 @@ body {
 /* 4. Product Image Hover Effect */
 .product-image-container {
   overflow: hidden;
+  position: relative;
+
   .v-img {
-    transition: transform 1.2s cubic-bezier(0.15, 0, 0.15, 1);
+    transition: transform 1.2s cubic-bezier(0.15, 0, 0.15, 1) !important;
   }
+
   &:hover .v-img {
     transform: scale(1.08);
+  }
+}
+
+/* ৫. বাংলার জন্য স্পেসিফিক ফিক্স (Optional) */
+// বাংলা ফন্ট সাইজ সাধারণত ইংরেজি থেকে ছোট দেখায়, তাই সামান্য অ্যাডজাস্টমেন্ট
+[lang="bn"] {
+  body {
+    font-size: 1.05rem;
   }
 }

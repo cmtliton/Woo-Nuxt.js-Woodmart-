@@ -18,7 +18,7 @@ export default defineCachedEventHandler(
             Authorization: `Basic ${auth}`,
           },
           query: {
-            per_page: query.per_page || 100,
+            per_page: query.per_page || 1,
             hide_empty: query.hide_empty || false,
             parent: query.parent || undefined,
           },
@@ -60,6 +60,7 @@ export default defineCachedEventHandler(
     // 5. Nitro Caching Strategy
     // Categories don't change often. Cache for 1 hour to save WP resources.
     maxAge: 60 * 60,
+    swr: true, // Enable Stale-While-Revalidate for better UX
     name: "product-categories",
     getKey: (event) => {
       const query = getQuery(event);

@@ -6,7 +6,7 @@ export default defineCachedEventHandler(
     // 1. Extract and sanitize query params
     const page = query.page || 1;
     const per_page = query.per_page || 16;
-    const category = query.category || "";
+    let category = query.category || "";
     const search = query.search || "";
     const sort = query.sort || "menu_order";
     const min_price = query.min_price || "";
@@ -39,7 +39,27 @@ export default defineCachedEventHandler(
     const auth = Buffer.from(`${config.wcKey}:${config.wcSecret}`).toString(
       "base64",
     );
-
+    //*********************************Getting category id************************************
+    if (category && isNaN(Number(category))) {
+      try {
+        const catResponse = await $fetch<any[]>(
+          `${config.public.wcUrl}/products/categories`,
+          {
+            headers: { Authorization: `Basic ${auth}` },
+            query: { slug: category },
+          },
+        );
+        if (catResponse && catResponse.length > 0) {
+          category = catResponse[0].id;
+        }
+      } catch (error) {
+        throw createError({
+          statusCode: 404,
+          statusMessage: "Category not found",
+        });
+      }
+    }
+    //.......................................................................................
     try {
       // 3. Fetch from WooCommerce
       const response = await $fetch.raw(`${config.public.wcUrl}/products`, {
@@ -59,7 +79,6 @@ export default defineCachedEventHandler(
           max_price: max_price || undefined,
         },
       });
-
       // 4. Extract Pagination Headers
       // WooCommerce provides total count and total pages in response headers
       const totalItems = response.headers.get("x-wp-total");
@@ -75,7 +94,7 @@ export default defineCachedEventHandler(
         regular_price: p.regular_price,
         on_sale: p.on_sale,
         image: p.images?.[0]?.src || "/placeholder.jpg",
-        category: p.categories?.[0]?.name || "Uncategorized",
+        categories: p.categories || [],
         rating: p.average_rating,
         date_created: p.date_created,
         menu_order: p.menu_order,
@@ -118,6 +137,7 @@ export default defineCachedEventHandler(
   {
     // 7. Caching Strategy (Performance)
     maxAge: 5 * 60, // Cache for 5 minutes
+    swr: true, // Enable Stale-While-Revalidate for better UX
     name: "products-list",
     getKey: (event) => {
       // Create a unique cache key based on query parameters

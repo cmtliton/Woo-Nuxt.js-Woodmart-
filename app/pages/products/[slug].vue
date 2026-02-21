@@ -39,14 +39,15 @@ const { pending, error } = await useAsyncData(
                 <NuxtImg
                   :src="img"
                   :alt="singleProduct.product.name"
-                  width="800"
-                  height="800"
+                  width="600"
+                  height="600"
                   fit="contain"
                   format="webp"
-                  quality="85"
+                  quality="80"
                   :loading="i === 0 ? 'eager' : 'lazy'"
                   :fetchpriority="i === 0 ? 'high' : 'auto'"
                   class="w-100 h-100"
+                  :placeholder="[50, 50, 75, 5]"
                 />
               </v-carousel-item>
             </v-carousel>
