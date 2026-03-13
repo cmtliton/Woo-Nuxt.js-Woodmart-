@@ -71,7 +71,7 @@ defineEmits(["click:quick-view"]);
         <div
           class="text-caption text-secondary text-uppercase letter-spacing-1 mb-1"
         >
-          {{ product.category }}
+          {{ product.categories?.[0]?.name || "Uncategorized" }}
         </div>
         <h3 class="text-subtitle-1 product-title mb-1 font-weight-medium">
           {{ product.name }}

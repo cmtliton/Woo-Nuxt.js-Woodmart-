@@ -34,7 +34,6 @@ useSeoMeta({
       color="background"
       class="d-flex align-center justify-center border-bottom mb-10"
     >
-      <pre>{{ displayProducts }}</pre>
       <div class="text-center px-4">
         <h1
           class="text-h2 font-weight-bold mb-4 text-uppercase letter-spacing-2"
