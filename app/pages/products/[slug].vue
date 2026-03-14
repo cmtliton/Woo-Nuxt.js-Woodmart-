@@ -1,5 +1,7 @@
 // app/pages/products/[slug].vue
 <script setup lang="ts">
+import { useDisplay } from "vuetify";
+const { mobile } = useDisplay();
 // ... আগের script logic ...
 const route = useRoute();
 const singleProduct = useSingleProductStore();
@@ -17,8 +19,21 @@ const { pending, error } = await useAsyncData(
 <template>
   <v-container class="py-10">
     <v-fade-transition mode="out-in">
-      <v-row v-if="pending || singleProduct.loading">
-        <!-- Skeleton logic remains same -->
+      <v-row v-if="pending || singleProduct.loading" class="g-4">
+        <v-col cols="12" md="6">
+          <v-skeleton-loader
+            type="image"
+            :height="mobile ? 280 : 520"
+            class="rounded-lg"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-skeleton-loader type="heading" class="mb-4" />
+          <v-skeleton-loader type="text" class="mb-2" />
+          <v-skeleton-loader type="text" class="mb-2" />
+          <v-skeleton-loader type="rect" :height="56" class="mb-2" />
+          <v-skeleton-loader type="rect" :height="56" width="120" />
+        </v-col>
       </v-row>
 
       <div v-else-if="singleProduct.product">
@@ -27,7 +42,7 @@ const { pending, error } = await useAsyncData(
           <v-col cols="12" md="6">
             <v-carousel
               hide-delimiters
-              height="600"
+              :height="!mobile ? 600 : 390"
               class="rounded-lg bg-grey-lighten-4"
               show-arrows="hover"
             >

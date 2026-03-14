@@ -71,11 +71,10 @@ await useAsyncData("global-categories", () => categoryStore.fetchCategories());
     <!-- 3. Main Content Area -->
     <v-main class="page-wrapper">
       <slot />
+      <!-- 4. Mobile UX Tools -->
+      <LayoutMobileBottomNav v-if="!mdAndUp" />
       <AppFooter />
     </v-main>
-
-    <!-- 4. Mobile UX Tools -->
-    <LayoutMobileBottomNav v-if="!mdAndUp" />
   </v-app>
 </template>
 

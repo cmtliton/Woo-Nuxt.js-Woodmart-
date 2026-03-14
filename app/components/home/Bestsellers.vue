@@ -110,15 +110,19 @@ const displayProducts = computed(() => {
                 >
                   <!-- Image Section with Internal Arrows & Heart -->
                   <div class="image-box position-relative overflow-hidden">
-                    <NuxtImg
-                      :src="product.image || '/images/placeholder.jpg'"
-                      :alt="product.name"
-                      width="320"
-                      height="380"
-                      fit="contain"
-                      class="main-img pa-4"
-                    />
-
+                    <NuxtLink
+                      :to="`/products/${product.slug}`"
+                      class="position-absolute inset-0 z-10"
+                    >
+                      <NuxtImg
+                        :src="product.image || '/images/placeholder.jpg'"
+                        :alt="product.name"
+                        width="320"
+                        height="380"
+                        fit="contain"
+                        class="main-img pa-4"
+                      />
+                    </NuxtLink>
                     <!-- Badges -->
                     <div
                       class="badge-stack"
